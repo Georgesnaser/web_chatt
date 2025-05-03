@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+.wrapper {
+    min-height: 100vh;
+    background: #f7f7f7;
+    padding: 20px;
+}
+
+.chat-area {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.chat-box {
+    height: 500px;
+    overflow-y: auto;
+}
+
+.outgoing .details p {
+    border-radius: 15px 15px 0 15px;
+}
+
+.incoming .details p {
+    border-radius: 15px 15px 15px 0;
+}
+
+.typing-area {
+    border-top: 1px solid #e6e6e6;
+    border-radius: 0 0 15px 15px;
+}
+
+.typing-area input {
+    border-radius: 25px;
+    transition: border-color 0.3s ease;
+}
+
+.typing-area button {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+
+.typing-area button i {
+    transform: rotate(45deg);
+}
