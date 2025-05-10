@@ -4,7 +4,7 @@ include "conn.php";
 if(isset($_POST['outcoming']) && isset($_POST['incoming']) && isset($_POST['msg'])) {
     $outcoming = $_POST['outcoming'];
     $incoming = $_POST['incoming'];
-    $message = $_POST['msg'];
+    $message = mysqli_real_escape_string($conn, $_POST['msg']);
 
     // Get the userid from uniqueid
     $sql_outcoming = "SELECT userid FROM users WHERE uniqueid = '{$outcoming}'";
@@ -25,10 +25,14 @@ if(isset($_POST['outcoming']) && isset($_POST['incoming']) && isset($_POST['msg'
                 $sql = "INSERT INTO messages (incoming, outcoming, msg) 
                         VALUES ('{$incoming_userid}', '{$outcoming_userid}', '{$message}')";
                 if(mysqli_query($conn, $sql)) {
-                    echo $message;
+                    echo "success";
+                } else {
+                    echo "Error: " . mysqli_error($conn);
                 }
             }
         }
     }
+} else {
+    echo "Missing required parameters";
 }
 ?>

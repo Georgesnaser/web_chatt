@@ -6,49 +6,112 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.wrapper {
+body {
     min-height: 100vh;
     background: #f7f7f7;
     padding: 20px;
 }
 
-.chat-area {
+.wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
     background: #fff;
     border-radius: 15px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    max-width: 1000px;
-    margin: 0 auto;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-area {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat-area header {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.chat-area header .back-icon {
+    color: #333;
+    font-size: 18px;
+    margin-right: 15px;
 }
 
 .chat-box {
-    height: 500px;
+    flex: 1;
     overflow-y: auto;
+    padding: 15px;
+    background: #f8f9fa;
 }
 
-.outgoing .details p {
-    border-radius: 15px 15px 0 15px;
+.chat-box::-webkit-scrollbar {
+    width: 5px;
 }
 
-.incoming .details p {
-    border-radius: 15px 15px 15px 0;
+.chat-box::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 5px;
+}
+
+.incoming.message, .outgoing.message {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.incoming.message {
+    justify-content: flex-start;
+}
+
+.outgoing.message {
+    justify-content: flex-end;
+}
+
+.message p {
+    padding: 10px 15px;
+    border-radius: 12px;
+    max-width: 70%;
+    word-break: break-word;
+}
+
+.incoming.message p {
+    background: #f0f2f5;
+    color: #333;
+}
+
+.outgoing.message p {
+    background: #0d6efd;
+    color: white;
 }
 
 .typing-area {
+    display: flex;
+    padding: 15px;
+    gap: 10px;
+    background: white;
     border-top: 1px solid #e6e6e6;
-    border-radius: 0 0 15px 15px;
 }
 
 .typing-area input {
+    flex: 1;
+    padding: 10px 15px;
     border-radius: 25px;
-    transition: border-color 0.3s ease;
+    border: 1px solid #ddd;
+    outline: none;
 }
 
 .typing-area button {
     width: 45px;
     height: 45px;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .typing-area button i {
-    transform: rotate(45deg);
+    font-size: 18px;
 }

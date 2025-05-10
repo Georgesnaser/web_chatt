@@ -23,7 +23,7 @@ if(isset($_POST['outcoming']) && isset($_POST['incoming'])) {
             $sql = "SELECT * FROM messages 
                     WHERE (outcoming = '{$outcoming_userid}' AND incoming = '{$incoming_userid}')
                     OR (outcoming = '{$incoming_userid}' AND incoming = '{$outcoming_userid}')
-                    ORDER BY msg_id";
+                    ORDER BY mesgid ASC";
                     
             $result = mysqli_query($conn, $sql);
             $output = "";
@@ -31,14 +31,18 @@ if(isset($_POST['outcoming']) && isset($_POST['incoming'])) {
             if(mysqli_num_rows($result) > 0) {
                 while($row = mysqli_fetch_assoc($result)) {
                     if($row['outcoming'] == $outcoming_userid) {
-                        $output .= '<div class="outgoing">'.$row['msg'].'</div>';
+                        $output .= '<div class="outgoing message"><p>'.$row['msg'].'</p></div>';
                     } else {
-                        $output .= '<div class="incoming">'.$row['msg'].'</div>';
+                        $output .= '<div class="incoming message"><p>'.$row['msg'].'</p></div>';
                     }
                 }
                 echo $output;
+            } else {
+                echo '<div class="text-center py-4">No messages yet. Start a conversation!</div>';
             }
         }
     }
+} else {
+    echo '<div class="text-center py-4">Error loading messages. Try refreshing.</div>';
 }
 ?>

@@ -10,16 +10,13 @@ $email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
 $img = isset($_SESSION['img']) ? $_SESSION['img'] : '';
 
 $incoming_id = isset($_GET['user_id']) ? $_GET['user_id'] : '';
-$outcoming = isset($_SESSION['uniqueid']) ? $_SESSION['uniqueid'] : '';
-$incoming =  $_GET['user_id'];
+$outcoming = $uniqueid;
+$incoming = $incoming_id;
 
-$sql = "SELECT * FROM messages 
-        WHERE (outcoming = '{$outcoming}' AND incoming = '{$incoming}')
-        OR (outcoming = '{$incoming}' AND incoming = '{$outcoming}')
-        ORDER BY mesgid ASC";
-$query = mysqli_query($conn, $sql);
-$output = "";
-
+if (!$uniqueid || !$incoming_id) {
+    header("Location: login.php");
+    exit();
+}
 
 ?>
 <!DOCTYPE html>
@@ -31,6 +28,32 @@ $output = "";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="chat.css">
+    <style>
+        .incoming.message, .outgoing.message {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .incoming.message {
+            justify-content: flex-start;
+        }
+        .outgoing.message {
+            justify-content: flex-end;
+        }
+        .message p {
+            padding: 10px 15px;
+            border-radius: 12px;
+            max-width: 70%;
+            word-break: break-word;
+        }
+        .incoming.message p {
+            background: #f0f2f5;
+            color: #333;
+        }
+        .outgoing.message p {
+            background: #0d6efd;
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div class="wrapper">
@@ -42,17 +65,18 @@ $output = "";
                     $row = mysqli_fetch_assoc($result);
                 ?>
              <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                <a href="user.php" class="back-icon"><i class="fas fa-arrow-left"></i></a>
                 <div class="content d-flex align-items-center">
                       <img src="<?php echo $row['img']; ?>" alt="profile" class="rounded-circle me-3" style="width: 45px; height: 45px;">
                       <div class="details">
                         <span class="fw-medium fs-5"><?php echo htmlspecialchars($row['fname'] . " " . $row['lname']); ?></span>
-                        <p class="text-muted mb-0"><?php echo  $row['status']; ?></p>
+                        <p class="text-muted mb-0"><?php echo $row['status']; ?></p>
                       </div>
                 </div>
                 <?php } ?>
              </header>
              <div class="chat-box p-3">
-                <?php include "get-chat.php"; ?>
+                <!-- Messages will be loaded here -->
              </div>
              <form id="chatForm" class="typing-area p-3 d-flex gap-2 bg-white">
                 <input type="hidden" name="outcoming" value="<?php echo $uniqueid; ?>">
@@ -68,25 +92,44 @@ $output = "";
     <script>
         const form = document.querySelector("#chatForm");
         const chatBox = document.querySelector(".chat-box");
-
+        const inputField = form.querySelector("input[name='msg']");
+        
+        // Function to load messages
+        function loadMessages() {
+            const formData = new FormData();
+            formData.append("outcoming", "<?php echo $outcoming; ?>");
+            formData.append("incoming", "<?php echo $incoming; ?>");
+            
+            fetch("get-chat.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                chatBox.innerHTML = data;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+        
+        // Load messages when page loads
+        window.onload = loadMessages;
+        
+        // Auto refresh messages every 3 seconds
+        setInterval(loadMessages, 3000);
+        
+        // Send message when form is submitted
         form.onsubmit = (e) => {
             e.preventDefault();
             const formData = new FormData(form);
-            const inputField = form.querySelector("input[name='msg']");
-
+            
             fetch("insert-chat.php", {
                 method: "POST",
                 body: formData
             })
             .then(response => response.text())
             .then(data => {
-                inputField.value = ""; // Clear only the message input
-                fetch("get-chat.php?user_id=<?php echo $incoming_id; ?>")
-                    .then(response => response.text())
-                    .then(messages => {
-                        chatBox.innerHTML = messages;
-                        chatBox.scrollTop = chatBox.scrollHeight;
-                    });
+                inputField.value = ""; // Clear message input
+                loadMessages(); // Reload messages to show the new one
             });
         };
     </script>
